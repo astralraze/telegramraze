@@ -11,16 +11,14 @@ from aiogram.filters import CommandStart, Command
 from aiogram.types import Message
 from aiogram.utils.markdown import hbold
 from dotenv import load_dotenv
-
-
-
-
+from handlers import database as db
 
 load_dotenv()
 
 async def main():
     bot = Bot(token=os.environ.get('TOKEN'), parse_mode=ParseMode.HTML)
     dp = Dispatcher()
+    await db.db_start()
     dp.include_router(router)
     await dp.start_polling(bot)
 
