@@ -7,7 +7,8 @@ async def db_start():
     cur.execute("CREATE TABLE IF NOT EXISTS accounts("
                 "id INTEGER PRIMARY KEY AUTOINCREMENT, "
                 "tg_id INTEGER, "
-                "size INTEGER)")
+                "size INTEGER,"
+                "date INTEGER DEFAULT 1)")
     db.commit()
 
 async def cmd_start_db(user_id):

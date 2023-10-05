@@ -5,6 +5,7 @@ from aiogram.filters import Filter
 import random
 from aiogram import Bot, Dispatcher, types, F
 from handlers import database as db
+import datetime
 
 HELP_TEXT = """
 Умови гри 'Розмір члену'.
@@ -29,20 +30,32 @@ async def cmd_start_and_help(message: types.Message):
 
 @router.message(F.text == '/play')
 async def cmd_up(message: types.Message):
-    usersize = db.cur.execute("SELECT size FROM accounts WHERE tg_id == {key}".format(key=message.from_user.id)).fetchone()
-    for user in usersize:
-        math = random.randint(-5,10)
-        user = user + math
-        db.cur.execute('UPDATE accounts SET size = {size} WHERE tg_id == {key}'.format(size=user, key=message.from_user.id)).fetchone()
-        db.db.commit()
-        if math > 0:
-            await message.answer(f'>>> 😻 Член збільшився на: {math} см. Ваш теперішній розмір: {user}')
+    date = datetime.datetime.now()
+    date = int(date.strftime('%Y%m%d'))
+    dateuser = db.cur.execute("SELECT date FROM accounts WHERE tg_id == {key}".format(key=message.from_user.id)).fetchone()
+    for row in dateuser:
+        if row == 1:
+            db.cur.execute("UPDATE accounts SET date = {datetime} WHERE tg_id == {key}".format(datetime=date,key=message.from_user.id)).fetchone()
+            db.db.commit()
+        elif row == date:
+            await message.answer('🙁 Сьогодні ви вже зіграли. Повертайтесь завтра 🙂')
         else:
-            await message.answer(f'>>> 🤏 Член зменшився на: {math} см. Ваш теперішній розмір: {user}')
+            usersize = db.cur.execute("SELECT size FROM accounts WHERE tg_id == {key}".format(key=message.from_user.id)).fetchone()
+            for user in usersize:
+                math = random.randint(-5,10)
+                user = user + math
+                db.cur.execute('UPDATE accounts SET size = {size} WHERE tg_id == {key}'.format(size=user, key=message.from_user.id)).fetchone()
+                db.cur.execute("UPDATE accounts SET date = {datetime} WHERE tg_id == {key}".format(datetime=date,key=message.from_user.id)).fetchone()
+                db.db.commit()
+                if math > 0:
+                    await message.answer(f'>>> 😻 Член збільшився на: {math} см. Ваш теперішній розмір: {user}')
+                else:
+                    await message.answer(f'>>> 🤏 Член зменшився на: {math} см. Ваш теперішній розмір: {user}')
+
+
 @router.message(F.text == '/size')
 async def cmd_size(message: types.Message):
-    await message.answer(">>> Ваш розмір члену: ")
-
-@router.message(F.text == '/down')
-async def test_func(message: types.Message):
-    await message.reply('>>> Вы успешно упали в низ.')
+    size = db.cur.execute('SELECT size FROM accounts WHERE tg_id == {key}'.format(key=message.from_user.id)).fetchone()
+    db.db.commit()
+    for row in size:
+        await message.reply(f">>> Ваш розмір члену: {row} см")
