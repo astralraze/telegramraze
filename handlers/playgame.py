@@ -2,7 +2,6 @@
 from aiogram import Bot, Dispatcher, Router, types, F, html
 from aiogram.types import Message, CallbackQuery
 from aiogram.filters import Filter
-from aiogram.methods.get_chat_member import GetChatMember
 import random
 from aiogram import Bot, Dispatcher, types, F
 from handlers import database as db
@@ -21,7 +20,10 @@ router = Router()
 @router.message(F.text == '/start')
 async def cmd_start_and_help(message: types.Message):
     #Вытягиваем id и записываем в бд
-    await db.cmd_start_db(message.from_user.id)
+    chat_id = message.chat.id
+    user_name = message.from_user.full_name
+    print(user_name)
+    await db.cmd_start_db(message.from_user.id, chat_id, user_name)
     await message.answer(HELP_TEXT)
 
 
@@ -58,6 +60,18 @@ async def cmd_size(message: types.Message):
     size = db.cur.execute('SELECT size FROM accounts WHERE tg_id == {key}'.format(key=message.from_user.id)).fetchone()
     db.db.commit()
     for rowed in size:
-        await message.answer(f">>> Ваш розмір члену: {rowed} см")
-        chat_id = message.chat.id
-        print(chat_id)
+        await message.answer(f">>> Ваш розмір члену: {rowed} см")\
+
+@router.message(F.text == '/leaders')
+async def cmd_getleaders(message: types.Message):
+    chat_id_session = message.chat.id
+    chatid_db = db.cur.execute('SELECT chatID FROM accounts WHERE tg_id == {key}'.format(key=message.from_user.id)).fetchone()
+    print(f"Текущий айди: {chat_id_session} Айди с бд: {chatid_db}")
+    for row in chatid_db:
+        if chat_id_session != row:
+            print("Это работает")
+            db.cur.execute("UPDATE accounts SET chatID = {chat} WHERE tg_id == {key}".format(chat=chat_id_session,key=message.from_user.id)).fetchone()
+        elif chat_id_session == row:
+            allmembers = db.cur.execute('SELECT tg_id FROM accounts WHERE chatID == {key}'.format(key=chat_id_session)).fetchall()
+            print(allmembers)
+    db.db.commit()
