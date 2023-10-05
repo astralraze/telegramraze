@@ -34,7 +34,7 @@ async def cmd_up(message: types.Message):
     date = int(date.strftime('%Y%m%d'))
     dateuser = db.cur.execute("SELECT date FROM accounts WHERE tg_id == {key}".format(key=message.from_user.id)).fetchone()
     for lit in dateuser:
-        if lit == 1 and lit != date:
+        if lit == 1 or lit != date:
             usersize = db.cur.execute("SELECT size FROM accounts WHERE tg_id == {key}".format(key=message.from_user.id)).fetchone()
             for user in usersize:
                 math = random.randint(-5,10)
