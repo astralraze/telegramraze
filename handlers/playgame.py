@@ -21,8 +21,6 @@ async def cmd_start_and_help(message: types.Message):
     #Вытягиваем id и записываем в бд
     await db.cmd_start_db(message.from_user.id)
     await message.answer(HELP_TEXT)
-    print("Pizda")
-    print("Llasl")
 
 @router.message(F.text == '/help')
 async def cmd_start_and_help(message: types.Message):
