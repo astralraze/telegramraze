@@ -2,6 +2,7 @@
 from aiogram import Bot, Dispatcher, Router, types, F, html
 from aiogram.types import Message, CallbackQuery
 from aiogram.filters import Filter
+from aiogram.methods.get_chat_member import GetChatMember
 import random
 from aiogram import Bot, Dispatcher, types, F
 from handlers import database as db
@@ -58,3 +59,5 @@ async def cmd_size(message: types.Message):
     db.db.commit()
     for rowed in size:
         await message.answer(f">>> Ваш розмір члену: {rowed} см")
+        chat_id = message.chat.id
+        print(chat_id)
