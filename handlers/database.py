@@ -8,7 +8,8 @@ async def db_start():
                 "id INTEGER PRIMARY KEY AUTOINCREMENT, "
                 "tg_id INTEGER, "
                 "size INTEGER,"
-                "date INTEGER DEFAULT 1)")
+                "date INTEGER DEFAULT 1,"
+                "chatID INTEGER)")
     db.commit()
 
 async def cmd_start_db(user_id):
