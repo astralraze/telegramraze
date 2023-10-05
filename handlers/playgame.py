@@ -22,6 +22,7 @@ async def cmd_start_and_help(message: types.Message):
     await db.cmd_start_db(message.from_user.id)
     await message.answer(HELP_TEXT)
 
+
 @router.message(F.text == '/help')
 async def cmd_start_and_help(message: types.Message):
     await message.answer(HELP_TEXT)
@@ -41,3 +42,7 @@ async def cmd_up(message: types.Message):
 @router.message(F.text == '/size')
 async def cmd_size(message: types.Message):
     await message.answer(">>> Ваш розмір члену: ")
+
+@router.message(F.text == '/down')
+async def test_func(message: types.Message):
+    await message.reply('>>> Вы успешно упали в низ.')
