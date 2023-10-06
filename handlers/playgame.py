@@ -33,45 +33,49 @@ async def cmd_start_and_help(message: types.Message):
 
 @router.message(F.text == '/play')
 async def cmd_up(message: types.Message):
+    #setcurrentdata in date
     date = datetime.datetime.now()
     date = int(date.strftime('%Y%m%d'))
-    dateuser = db.cur.execute("SELECT date FROM accounts WHERE tg_id == {key}".format(key=message.from_user.id)).fetchone()
+    #setdatafromdb in datauser
+    dateuser = await db.select_date(message)
     for lit in dateuser:
         if lit == 1 or lit != date:
-            usersize = db.cur.execute("SELECT size FROM accounts WHERE tg_id == {key}".format(key=message.from_user.id)).fetchone()
+            #getsizefromdb in usersize
+            usersize = await db.select_size(message)
             for user in usersize:
                 math = random.randint(-5,10)
-                user = user + math
-                db.cur.execute('UPDATE accounts SET size = {size} WHERE tg_id == {key}'.format(size=user, key=message.from_user.id)).fetchone()
-                db.cur.execute("UPDATE accounts SET date = {datetime} WHERE tg_id == {key}".format(datetime=date,key=message.from_user.id)).fetchone()
-                db.db.commit()
+                newsize = user + math
+                newdate = date
+                await db.update_size(newsize, message.from_user.id)
+                await db.update_date(newdate, message.from_user.id)
                 if math > 0:
-                    await message.answer(f'>>> 😻 Член збільшився на: {math} см. Ваш теперішній розмір: {user}')
+                    await message.answer(f'>>> 😻 Член збільшився на: {math} см. Ваш теперішній розмір: {newsize}')
                 else:
-                    await message.answer(f'>>> 🤏 Член зменшився на: {math} см. Ваш теперішній розмір: {user}')
+                    await message.answer(f'>>> 🤏 Член зменшився на: {math} см. Ваш теперішній розмір: {newsize}')
         elif lit == date:
             await message.answer('🙁 Сьогодні ви вже зіграли. Повертайтесь завтра 🙂')
         elif lit == 1:
-            db.cur.execute("UPDATE accounts SET date = {datetime} WHERE tg_id == {key}".format(datetime=date,key=message.from_user.id)).fetchone()
+            newdate = date
+            await db.update_date(newdate, message.from_user.id)
             db.db.commit()
 
 @router.message(F.text == '/size')
 async def cmd_size(message: types.Message):
-    size = db.cur.execute('SELECT size FROM accounts WHERE tg_id == {key}'.format(key=message.from_user.id)).fetchone()
-    db.db.commit()
+    size = await db.select_size(message)
     for rowed in size:
         await message.answer(f">>> Ваш розмір члену: {rowed} см")\
 
 @router.message(F.text == '/leaders')
 async def cmd_getleaders(message: types.Message):
     chat_id_session = message.chat.id
-    chatid_db = db.cur.execute('SELECT chatID FROM accounts WHERE tg_id == {key}'.format(key=message.from_user.id)).fetchone()
+    chatid_db = await db.select_chat_id(message)
     print(f"Текущий айди: {chat_id_session} Айди с бд: {chatid_db}")
     for row in chatid_db:
         if chat_id_session != row:
             print("Это работает")
-            db.cur.execute("UPDATE accounts SET chatID = {chat} WHERE tg_id == {key}".format(chat=chat_id_session,key=message.from_user.id)).fetchone()
+            newchatid = chat_id_session
+            await db.update_chat_id(newchatid, message.from_user.id)
         elif chat_id_session == row:
-            allmembers = db.cur.execute('SELECT tg_id FROM accounts WHERE chatID == {key}'.format(key=chat_id_session)).fetchall()
+            allmembers = await db.select_members(message)
             print(allmembers)
     db.db.commit()
