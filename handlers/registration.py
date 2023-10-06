@@ -33,10 +33,10 @@ async def cmd_start_and_help(message: types.Message):
         user_name = message.from_user.full_name
         print(user_name)
         await db.cmd_start_db(message.from_user.id, chat_id, user_name)
-        await message.answer(f"🥰 Привіт {user_name}, ти успішно зареєстрований.\n {HELP_TEXT}")
+        await message.reply(f"🥰 Привіт {user_name}, ти успішно зареєстрований.\n {HELP_TEXT}")
     else:
-        await message.answer(f"💞 Сонечко, ти вже був зареєстрований.\n {HELP_TEXT}")
+        await message.reply(f"💞 Сонечко, ти вже був зареєстрований.\n {HELP_TEXT}")
 
 @router_reg.message(Command('about'))
 async def cmd_about(message: types.Message):
-    await message.answer(f"{ABOUT_TEXT}")
+    await message.reply(f"{ABOUT_TEXT}")

@@ -24,15 +24,15 @@ async def cmd_start_and_help(message: types.Message):
     check_user = await db.select_username(message)
     print (check_user)
     if not check_user:
-        await message.answer("😿 Котик, ти не зареєстрований для цієї команди. Зареєструйся за допомогою /reg")
+        await message.reply("😿 Котик, ти не зареєстрований для цієї команди. Зареєструйся за допомогою /reg")
     else:
-        await message.answer(HELP_TEXT)
+        await message.reply(HELP_TEXT)
 
 @router.message(Command('dick'))
 async def cmd_up(message: types.Message):
     check_user = await db.select_username(message)
     if not check_user:
-        await message.answer("😿 Котик, ти не зареєстрований для цієї команди. Зареєструйся за допомогою /reg")
+        await message.reply("😿 Котик, ти не зареєстрований для цієї команди. Зареєструйся за допомогою /reg")
     else:
     #setcurrentdata in date
         date = datetime.datetime.now()
@@ -50,11 +50,11 @@ async def cmd_up(message: types.Message):
                     await db.update_size(newsize, message.from_user.id)
                     await db.update_date(newdate, message.from_user.id)
                     if math > 0:
-                        await message.answer(f'>>> 😻 Член збільшився на: {math} см. Ваш теперішній розмір: {newsize}')
+                        await message.reply(f'>>> 😻 Член збільшився на: {math} см. Ваш теперішній розмір: {newsize}')
                     else:
-                        await message.answer(f'>>> 🤏 Член зменшився на: {math} см. Ваш теперішній розмір: {newsize}')
+                        await message.reply(f'>>> 🤏 Член зменшився на: {math} см. Ваш теперішній розмір: {newsize}')
             elif lit == date:
-                await message.answer('🙁 Сьогодні ви вже зіграли. Повертайтесь завтра 🙂')
+                await message.reply('🙁 Сьогодні ви вже зіграли. Повертайтесь завтра 🙂')
             elif lit == 1:
                 newdate = date
                 await db.update_date(newdate, message.from_user.id)
@@ -64,17 +64,17 @@ async def cmd_up(message: types.Message):
 async def cmd_size(message: types.Message):
     check_user = await db.select_username(message)
     if not check_user:
-        await message.answer("😿 Котик, ти не зареєстрований для цієї команди. Зареєструйся за допомогою /reg")
+        await message.reply("😿 Котик, ти не зареєстрований для цієї команди. Зареєструйся за допомогою /reg")
     else:
         size = await db.select_size(message)
         for rowed in size:
-            await message.answer(f">>> Ваш розмір члену: {rowed} см")
+            await message.reply(f">>> Ваш розмір члену: {rowed} см")
 
 @router.message(Command('leaders'))
 async def cmd_getleaders(message: types.Message):
     check_user = await db.select_username(message)
     if not check_user:
-        await message.answer("😿 Котик, ти не зареєстрований для цієї команди. Зареєструйся за допомогою /reg")
+        await message.reply("😿 Котик, ти не зареєстрований для цієї команди. Зареєструйся за допомогою /reg")
     else:
         chat_id_session = message.chat.id
         chatid_db = await db.select_chat_id(message)
@@ -105,5 +105,5 @@ async def cmd_getleaders(message: types.Message):
                     pers += 1
 
                 text = '\n'.join(formatted_messages)
-                await message.answer(f'👑 Список лідерів 👑\n\n{text}')
+                await message.reply(f'👑 Список лідерів 👑\n\n{text}')
         db.db.commit()
