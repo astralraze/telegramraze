@@ -16,6 +16,7 @@ from dotenv import load_dotenv
 from handlers import database as db
 
 
+
 load_dotenv()
 
 async def main():
@@ -23,8 +24,8 @@ async def main():
     dp = Dispatcher()
     await db.db_start()
     dp.include_router(router)
-    dp.include_router(router_filter)
     dp.include_router(router_reg)
+    dp.include_router(router_filter)
     await dp.start_polling(bot)
 
 
