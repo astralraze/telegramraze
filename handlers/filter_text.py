@@ -5,6 +5,7 @@ from aiogram import Bot, Dispatcher, types, F
 
 router_filter = Router()
 
+
 SAVOCHKIN_PHRASE = [
     'Савочкин', 'Savochkin', 'Савочкину', 'Савочкиным', 'Савочкін', 'Савочкіну', 'Савочкіним',
     'Владислав Савочкін', 'Владислав Савочкин', 'Владиславу Савочкину', 'Влад Савочкин',
@@ -14,6 +15,7 @@ SAVOCHKIN_PHRASE = [
 SKAKUN_PHRASE = [
     'скакун', 'Скакун', 'Скакунчик', 'Артем Скакун', 'Skakun', 'Артём Скакун', 'Админ Скакун'
 ]
+
 
 @router_filter.message()
 async def filter(message: types.Message):

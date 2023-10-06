@@ -16,6 +16,7 @@ from dotenv import load_dotenv
 from handlers import database as db
 
 
+
 load_dotenv()
 
 async def main():
