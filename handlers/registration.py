@@ -1,6 +1,6 @@
 from aiogram import Bot, Dispatcher, Router, types, F, html
 from aiogram.types import Message, CallbackQuery
-from aiogram.filters import Filter
+from aiogram.filters import Filter, Command
 import random
 from aiogram import Bot, Dispatcher, types, F
 from handlers import database as db
@@ -15,7 +15,7 @@ HELP_TEXT = """
 /dickinfo - подивитись інформацію про гру та доступні команди 🌵📒
 """
 
-@router_reg.message(F.text == '/reg')
+@router_reg.message(Command('reg'))
 async def cmd_start_and_help(message: types.Message):
     check_user = await db.select_username(message)
     if not check_user:
