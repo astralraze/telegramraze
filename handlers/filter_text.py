@@ -20,7 +20,6 @@ RAZE_PHRASE = [
     'raze', 'рейз', 'рейзы'
 ]
 
-
 @router_filter.message()
 async def filter(message: types.Message):
     if any(word.lower() in message.text.lower() for word in SAVOCHKIN_PHRASE):
