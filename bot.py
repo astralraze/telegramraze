@@ -8,11 +8,13 @@ from aiogram import Bot, Dispatcher, types, F
 from aiogram.enums import ParseMode
 from handlers.playgame import router
 from handlers.registration import router_reg
+from handlers.filter_text import router_filter
 from aiogram.filters import CommandStart, Command
 from aiogram.types import Message
 from aiogram.utils.markdown import hbold
 from dotenv import load_dotenv
 from handlers import database as db
+
 
 load_dotenv()
 
@@ -21,6 +23,7 @@ async def main():
     dp = Dispatcher()
     await db.db_start()
     dp.include_router(router)
+    dp.include_router(router_filter)
     dp.include_router(router_reg)
     await dp.start_polling(bot)
 

@@ -1,7 +1,7 @@
 # version 1.1-0
 from aiogram import Bot, Dispatcher, Router, types, F, html
 from aiogram.types import Message, CallbackQuery
-from aiogram.filters import Filter
+from aiogram.filters import Filter, Command
 import random
 from aiogram import Bot, Dispatcher, types, F
 from handlers import database as db
@@ -19,7 +19,7 @@ HELP_TEXT = """
 
 router = Router()
 
-@router.message(F.text == '/dickinfo')
+@router.message(Command('dickinfo'))
 async def cmd_start_and_help(message: types.Message):
     check_user = await db.select_username(message)
     print (check_user)
@@ -28,7 +28,7 @@ async def cmd_start_and_help(message: types.Message):
     else:
         await message.answer(HELP_TEXT)
 
-@router.message(F.text == '/dick')
+@router.message(Command('dick'))
 async def cmd_up(message: types.Message):
     check_user = await db.select_username(message)
     if not check_user:
@@ -60,7 +60,7 @@ async def cmd_up(message: types.Message):
                 await db.update_date(newdate, message.from_user.id)
                 db.db.commit()
 
-@router.message(F.text == '/size')
+@router.message(Command('size'))
 async def cmd_size(message: types.Message):
     check_user = await db.select_username(message)
     if not check_user:
@@ -70,7 +70,7 @@ async def cmd_size(message: types.Message):
         for rowed in size:
             await message.answer(f">>> Ваш розмір члену: {rowed} см")
 
-@router.message(F.text == '/leaders')
+@router.message(Command('leaders'))
 async def cmd_getleaders(message: types.Message):
     check_user = await db.select_username(message)
     if not check_user:
