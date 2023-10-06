@@ -9,10 +9,11 @@ import datetime
 
 HELP_TEXT = """
 Умови гри 'Розмір члену'.
-Ви можете збільшити або зменшити свій розмір члену від -10 до +10 см в день.
+Ви можете збільшити або зменшити свій розмір члену від -5ХАХХА до +10 см в день.
 
 /size - Дізнатися свій розмір члену.
 /play - Випробувати свою удачу на день та дізнайтеся теперішній розмір вашого члену.
+/leaders - Переглянути таблицю лідерів.
 """
 
 router = Router()
@@ -78,4 +79,23 @@ async def cmd_getleaders(message: types.Message):
         elif chat_id_session == row:
             allmembers = await db.select_members(message)
             print(allmembers)
+            sorted_list = sorted(allmembers, key=lambda x: x[1], reverse=True)
+            print(sorted_list)
+            formatted_messages = []
+            pers = 1
+            leader_stik = '🥇'
+            for name, value in sorted_list:
+                if pers == 1:
+                    leader_stik = leader_stik
+                elif pers == 2:
+                    leader_stik = '🥈'
+                elif pers == 3:
+                    leader_stik = '🥉'
+                elif pers > 3:
+                    leader_stik = '👤'
+                formatted_messages.append(f'{leader_stik}  {name} 👉 {value} см')
+                pers += 1
+
+            text = '\n'.join(formatted_messages)
+            await message.answer(f'👑 Список лідерів 👑\n\n{text}')
     db.db.commit()

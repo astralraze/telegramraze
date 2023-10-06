@@ -25,14 +25,14 @@ async def cmd_start_db(user_id, chat_id, user_name):
 #метод выбрать дату
 async def select_date(message: types.Message):
     datauser = cur.execute("SELECT date FROM accounts WHERE tg_id == {key}".format(key=message.from_user.id)).fetchone()
-    return datauser
     db.commit()
+    return datauser
 
 #метод выбрать размер
 async def select_size(message: types.Message):
     size = cur.execute("SELECT size FROM accounts WHERE tg_id == {key}".format(key=message.from_user.id)).fetchone()
-    return size
     db.commit()
+    return size
 
 #метод обновить размер
 async def update_size(newsize, user_id):
@@ -47,8 +47,8 @@ async def update_date(newdate, user_id):
 #метод выбрать chatid у юзера
 async def select_chat_id(message: types.Message):
     chatid = cur.execute('SELECT chatID FROM accounts WHERE tg_id == {key}'.format(key=message.from_user.id)).fetchone()
-    return chatid
     db.commit()
+    return chatid
 
 #метод обновления чатайди
 async def update_chat_id(newchatid, user_id):
@@ -57,6 +57,8 @@ async def update_chat_id(newchatid, user_id):
 
 #метод выбрать всех пользователей с одинаковым чат айди
 async def select_members(message: types.Message):
-    members = cur.execute('SELECT tg_id FROM accounts WHERE chatID == {key}'.format(key=message.chat.id)).fetchall()
-    return members
+    members = cur.execute('SELECT username, size FROM accounts WHERE chatID == {key}'.format(key=message.chat.id)).fetchall()
     db.commit()
+    return members
+
+#
