@@ -15,6 +15,15 @@ HELP_TEXT = """
 /dickinfo - подивитись інформацію про гру та доступні команди 🌵📒
 """
 
+ABOUT_TEXT = """
+🦄 Я Misa BOT
+
+Хочеш грати? Тобі доступні такі ігри:
+
+/dick - змагайся серед гравців у розмірі пісюна. 🌵
+/dickinfo - подивитись інформацію про гру та доступні команди 🌵📒
+"""
+
 @router_reg.message(Command('reg'))
 async def cmd_start_and_help(message: types.Message):
     check_user = await db.select_username(message)
@@ -27,3 +36,7 @@ async def cmd_start_and_help(message: types.Message):
         await message.answer(f"🥰 Привіт {user_name}, ти успішно зареєстрований.\n {HELP_TEXT}")
     else:
         await message.answer(f"💞 Сонечко, ти вже був зареєстрований.\n {HELP_TEXT}")
+
+@router_reg.message(Command('about'))
+async def cmd_about(message: types.Message):
+    await message.answer(f"{ABOUT_TEXT}")
