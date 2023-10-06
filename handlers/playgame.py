@@ -104,6 +104,7 @@ async def cmd_getleaders(message: types.Message):
                     formatted_messages.append(f'{leader_stik}  {name} 👉 {value} см')
                     pers += 1
 
+
                 text = '\n'.join(formatted_messages)
                 await message.reply(f'👑 Список лідерів 👑\n\n{text}')
         db.db.commit()

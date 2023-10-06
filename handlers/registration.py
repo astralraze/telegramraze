@@ -24,6 +24,7 @@ ABOUT_TEXT = """
 /dickinfo - подивитись інформацію про гру та доступні команди 🌵📒
 """
 
+
 @router_reg.message(Command('reg'))
 async def cmd_start_and_help(message: types.Message):
     check_user = await db.select_username(message)
