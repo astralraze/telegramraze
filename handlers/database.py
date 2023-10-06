@@ -61,4 +61,8 @@ async def select_members(message: types.Message):
     db.commit()
     return members
 
-#
+#метод выбрать имя пользователя
+async def select_username(message: types.Message):
+    username = cur.execute('SELECT tg_id FROM accounts WHERE tg_id == {key}'.format(key=message.from_user.id)).fetchone()
+    db.commit()
+    return username
