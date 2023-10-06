@@ -33,13 +33,8 @@ async def cmd_up(message: types.Message):
     date = datetime.datetime.now()
     date = int(date.strftime('%Y%m%d'))
     dateuser = db.cur.execute("SELECT date FROM accounts WHERE tg_id == {key}".format(key=message.from_user.id)).fetchone()
-    for row in dateuser:
-        if row == 1:
-            db.cur.execute("UPDATE accounts SET date = {datetime} WHERE tg_id == {key}".format(datetime=date,key=message.from_user.id)).fetchone()
-            db.db.commit()
-        elif row == date:
-            await message.answer('🙁 Сьогодні ви вже зіграли. Повертайтесь завтра 🙂')
-        else:
+    for lit in dateuser:
+        if lit == 1 and lit != date:
             usersize = db.cur.execute("SELECT size FROM accounts WHERE tg_id == {key}".format(key=message.from_user.id)).fetchone()
             for user in usersize:
                 math = random.randint(-5,10)
@@ -51,11 +46,15 @@ async def cmd_up(message: types.Message):
                     await message.answer(f'>>> 😻 Член збільшився на: {math} см. Ваш теперішній розмір: {user}')
                 else:
                     await message.answer(f'>>> 🤏 Член зменшився на: {math} см. Ваш теперішній розмір: {user}')
-
+        elif lit == date:
+            await message.answer('🙁 Сьогодні ви вже зіграли. Повертайтесь завтра 🙂')
+        elif lit == 1:
+            db.cur.execute("UPDATE accounts SET date = {datetime} WHERE tg_id == {key}".format(datetime=date,key=message.from_user.id)).fetchone()
+            db.db.commit()
 
 @router.message(F.text == '/size')
 async def cmd_size(message: types.Message):
     size = db.cur.execute('SELECT size FROM accounts WHERE tg_id == {key}'.format(key=message.from_user.id)).fetchone()
     db.db.commit()
-    for row in size:
-        await message.reply(f">>> Ваш розмір члену: {row} см")
+    for rowed in size:
+        await message.answer(f">>> Ваш розмір члену: {rowed} см")
