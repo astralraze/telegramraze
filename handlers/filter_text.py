@@ -1,6 +1,6 @@
 from aiogram import Bot, Dispatcher, Router, types, F, html
 from aiogram.types import Message, CallbackQuery
-from aiogram.types import InputFile
+from aiogram.types import InputFile, FSInputFile
 from aiogram.methods.send_photo import SendPhoto
 from aiogram.filters import Filter, Command
 from aiogram import Bot, Dispatcher, types, F
@@ -45,6 +45,9 @@ MISA_GO_PHOTO = [
     'фотку скинь миса', 'миса скинь фотку', 'миса покажись', 'миса отправь фото', 'міса фото', 'міса фотку',
     'міса скинь фотку', 'міса відправ фото', 'міса покажи себе', 'фото міси', 'міса як ти виглядаєш?']
 
+MISA_GO_MUR = [
+    'мур', 'котик', 'киса', 'помурчи', 'киця']
+
 MISA_PHOTO = ['https://cdn.kanobu.ru/editor/images/94/85d6b137-18cb-4996-8a1c-20518b6b8b01.webp',
               'https://cdn.kanobu.ru/editor/images/81/a8f42e62-7b0d-4dfc-aa4a-bf6ca665ac42.webp',
               'https://cdn.kanobu.ru/editor/images/52/21db48de-ad64-4101-afa8-74d14a28f98a.webp',
@@ -65,6 +68,10 @@ async def filter(message: types.Message):
 
     elif any(word.lower() in message.text.lower() for word in SKAKUN_PHRASE):
         await message.reply("Скакун... це той у кого 5 см в штанах? 🤭")
+
+    elif any(word.lower() in message.text.lower() for word in MISA_GO_MUR):
+        voicee = FSInputFile("voice/voice_20-10-2023_00-37-03")
+        await message.answer_voice(voicee)
 
     elif message.text.__contains__('@MisaAI_bot'):
         answer_misa = random.choice(MISA_TO_ANSWER)
