@@ -9,12 +9,13 @@ from aiogram.enums import ParseMode
 from handlers.playgame import router
 from handlers.registration import router_reg
 from handlers.filter_text import router_filter
-from handlers.games import games_rtr
 from aiogram.filters import CommandStart, Command
 from aiogram.types import Message
 from aiogram.utils.markdown import hbold
 from dotenv import load_dotenv
 from handlers import database as db
+
+
 
 load_dotenv()
 
@@ -24,7 +25,6 @@ async def main():
     await db.db_start()
     dp.include_router(router)
     dp.include_router(router_reg)
-    dp.include_router(games_rtr)
     dp.include_router(router_filter)
     await dp.start_polling(bot)
 

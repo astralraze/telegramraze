@@ -32,7 +32,6 @@ async def cmd_start_and_help(message: types.Message):
         #Вытягиваем id и записываем в бд
         chat_id = message.chat.id
         user_name = message.from_user.full_name
-        print(user_name)
         await db.cmd_start_db(message.from_user.id, chat_id, user_name)
         await message.reply(f"🥰 Привіт {user_name}, ти успішно зареєстрований.\n {HELP_TEXT}")
     else:
