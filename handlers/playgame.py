@@ -7,6 +7,7 @@ import random
 from aiogram import Bot, Dispatcher, types, F
 from handlers import database as db
 import datetime
+import asyncio
 
 
 
@@ -25,7 +26,6 @@ router = Router()
 @router.message(Command('dickinfo'))
 async def cmd_start_and_help(message: types.Message):
     check_user = await db.select_username(message)
-    print (check_user)
     if not check_user:
         await message.reply("😿 Котик, ти не зареєстрований для цієї команди. Зареєструйся за допомогою /reg")
     else:
@@ -33,6 +33,7 @@ async def cmd_start_and_help(message: types.Message):
 
 @router.message(Command('dick'))
 async def cmd_up(message: types.Message):
+    ATTEMPTS = 2
     check_user = await db.select_username(message)
     if not check_user:
         await message.reply("😿 Котик, ти не зареєстрований для цієї команди. Зареєструйся за допомогою /reg")
@@ -135,3 +136,62 @@ async def cmd_getleaders(message: types.Message):
                 text = '\n'.join(formatted_messages)
                 await message.reply(f'👑 Список лідерів 👑\n\n{text}')
         db.db.commit()
+
+
+@router.message(Command('rade'))
+async def send_box(message: types.Message):
+    check_user = await db.select_username(message)
+    if not check_user:
+        await message.reply("😿 Котик, ти не зареєстрований для цієї команди. Зареєструйся за допомогою /reg")
+    else:
+        numberID_event = 1
+        eventName = await db.select_eventName(numberID_event)
+        descriptionName = await db.select_eventDescription(numberID_event)
+        rand_time = random.randint(10, 50)
+
+        now = datetime.datetime.now()
+        dateevent = await db.select_dateEvent(numberID_event)
+        if dateevent:
+            last_date_time = datetime.datetime.strptime(dateevent[0], '%Y-%m-%d %H:%M:%S.%f')
+            difference = now - last_date_time
+            if difference < datetime.timedelta(hours=3):
+                hours_left = (3 * 60 - difference.seconds // 60) // 60
+                minutes_left = (3 * 60 - difference.seconds // 60) % 60
+                if hours_left < 5 and hours_left != 1 and hours_left != 0:
+                    await message.reply(f'😐 Івент буде доступний через {hours_left} години {minutes_left} хвилин.')
+                elif hours_left == 1:
+                    await message.reply(f'😐 Івент буде доступний через{hours_left} годину {minutes_left} хвилин.')
+                elif hours_left == 0:
+                    await message.reply(f'😐 Івент буде доступний через {minutes_left} хвилин.')
+                else:
+                    await message.reply(f'😐 Івент буде доступний через {hours_left} годин {minutes_left} хвилин.')
+            else:
+                randSleep = random.randint(15,30)
+                await db.update_dateEvent(now, numberID_event)
+                await message.reply('Івент активований!\nПочався пошук конверту... Очікуйте')
+                await asyncio.sleep(randSleep)
+                await message.reply(f'Прийшов конверт.\n Для того щоб забрати конверт використайте команду - /claim.')
+                takeIsActive = await db.takeIsActive(numberID_event)
+                newActive = 1
+                await db.updateIsActive(newActive, numberID_event)
+
+
+@router.message(Command('claim'))
+async def claim_chest(message: types.Message):
+    check_user = await db.select_username(message)
+    if not check_user:
+        await message.reply("😿 Котик, ти не зареєстрований для цієї команди. Зареєструйся за допомогою /reg")
+    else:
+        numberID_event = 1
+        takeIsActive = await db.takeIsActive(numberID_event)
+        if takeIsActive == 1:
+            prizeSize = random.randint(1,3)
+            sizeUser = await db.select_size(message)
+            for ns in sizeUser:
+                newsize = prizeSize + ns
+                await db.update_size(newsize, message.from_user.id)
+                await message.reply(f'Ти відкрили конверт і отримали подарунок у вигляді +{prizeSize}.\n Твій поточний розмір {newsize}.')
+                newActive = 0
+                await db.updateIsActive(newActive, numberID_event)
+        else:
+            await message.reply('Конверт вже відкритий, очікуй наступного івенту.')

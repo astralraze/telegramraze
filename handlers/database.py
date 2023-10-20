@@ -56,3 +56,37 @@ async def select_username(message: types.Message):
     username = cur.execute('SELECT tg_id FROM accounts WHERE tg_id == {key}'.format(key=message.from_user.id)).fetchone()
     db.commit()
     return username
+
+
+async def select_eventName(numberID_event):
+    event_name = cur.execute("SELECT name FROM event WHERE id == {key}".format(key=numberID_event)).fetchone()
+    db.commit()
+    for name in event_name:
+        return name
+
+
+async def select_eventDescription(numberID_event):
+    event_name = cur.execute("SELECT description FROM event WHERE id == {key}".format(key=numberID_event)).fetchone()
+    db.commit()
+    for name in event_name:
+        return name
+
+
+async def select_dateEvent(numberID_event):
+    dateEvent = cur.execute("SELECT date FROM event WHERE id == {key}".format(key=numberID_event)).fetchone()
+    db.commit()
+    return dateEvent
+
+async def update_dateEvent(now, numberID_event):
+    cur.execute("UPDATE event SET date = ? WHERE id = ?", (now, numberID_event))
+    db.commit()
+
+async def takeIsActive(numberID_event):
+    isActive = cur.execute("SELECT isActive FROM event WHERE id == {key}".format(key=numberID_event)).fetchone()
+    db.commit()
+    for active in isActive:
+        return active\
+
+async def updateIsActive(newActive, numberID_event):
+    isActive = cur.execute("UPDATE event SET isActive == {newActive} WHERE id == {key}".format(newActive=newActive, key=numberID_event)).fetchone()
+    db.commit()
