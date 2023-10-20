@@ -5,16 +5,6 @@ from aiogram.types import Message, CallbackQuery
 db = sq.connect('tg.db')
 cur = db.cursor()
 
-async def db_start():
-    cur.execute("CREATE TABLE IF NOT EXISTS accounts("
-                "id INTEGER PRIMARY KEY AUTOINCREMENT,"
-                "tg_id INTEGER,"
-                "size INTEGER,"
-                "date INTEGER DEFAULT 1,"
-                "chatID INTEGER,"
-                "username TEXT)")
-    db.commit()
-
 async def cmd_start_db(user_id, chat_id, user_name):
     user = cur.execute("SELECT * FROM accounts WHERE tg_id == {key}".format(key=user_id)).fetchone()
     if not user:
@@ -24,7 +14,7 @@ async def cmd_start_db(user_id, chat_id, user_name):
 
 #метод выбрать дату
 async def select_date(message: types.Message):
-    datauser = cur.execute("SELECT date FROM accounts WHERE tg_id == {key}".format(key=message.from_user.id)).fetchone()
+    datauser = cur.execute("SELECT time FROM accounts WHERE tg_id == {key}".format(key=message.from_user.id)).fetchone()
     db.commit()
     return datauser
 
@@ -40,8 +30,8 @@ async def update_size(newsize, user_id):
     db.commit()
 
 #метод обновить дату
-async def update_date(newdate, user_id):
-    cur.execute("UPDATE accounts SET date = {datetime} WHERE tg_id == {key}".format(datetime=newdate, key=user_id)).fetchone()
+async def update_date(now, user_id):
+    cur.execute("UPDATE accounts SET time = ? WHERE tg_id = ?", (now, user_id))
     db.commit()
 
 #метод выбрать chatid у юзера

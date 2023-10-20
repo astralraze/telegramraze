@@ -38,32 +38,37 @@ async def cmd_up(message: types.Message):
         await message.reply("😿 Котик, ти не зареєстрований для цієї команди. Зареєструйся за допомогою /reg")
     else:
     #setcurrentdata in date
-        date = datetime.datetime.now()
-        date = int(date.strftime('%Y%m%d'))
+        now = datetime.datetime.now()
         #setdatafromdb in datauser
         dateuser = await db.select_date(message)
-        for lit in dateuser:
-            if lit == 1 or lit != date:
+        if dateuser:
+            last_used_time = datetime.datetime.strptime(dateuser[0], '%Y-%m-%d %H:%M:%S.%f')
+            difference = now - last_used_time
+            if difference < datetime.timedelta(hours=12):
+                hours_left = (12 * 60 - difference.seconds // 60) // 60
+                minutes_left = (12 * 60 - difference.seconds // 60) % 60
+                if hours_left < 5 and hours_left != 1 and hours_left != 0:
+                    await message.reply(f'😐 Почекай ще {hours_left} години {minutes_left} хвилин.')
+                elif hours_left == 1:
+                    await message.reply(f'😐 Почекай ще {hours_left} годину {minutes_left} хвилин.')
+                elif hours_left == 0:
+                    await message.reply(f'😐 Почекай ще {minutes_left} хвилин.')
+                else:
+                    await message.reply(f'😐 Почекай ще {hours_left} годин {minutes_left} хвилин.')
+            else:
                 #getsizefromdb in usersize
                 usersize = await db.select_size(message)
                 for user in usersize:
-                    math = random.randint(-5,10)
+                    math = random.randint(-10,10)
                     newsize = user + math
-                    newdate = date
                     await db.update_size(newsize, message.from_user.id)
-                    await db.update_date(newdate, message.from_user.id)
+                    await db.update_date(now, message.from_user.id)
                     if math > 0:
                         await message.reply(f'>>> 😻 Член збільшився на: {math} см. Твій теперішній розмір: {newsize} см')
                     elif math == 0:
                         await message.reply(f'>>> 😐 Член не змінився. Твій розмір: {newsize} см')
                     elif math < 0:
                         await message.reply(f'>>> 🤏 Член зменшився на: {math} см. Твій теперішній розмір: {newsize} см')
-            elif lit == date:
-                await message.reply('🙁 Сьогодні ти вже зіграв(ла). Повертайся завтра 🙂')
-            elif lit == 1:
-                newdate = date
-                await db.update_date(newdate, message.from_user.id)
-                db.db.commit()
 
 @router.message(Command('size'))
 async def cmd_size(message: types.Message):

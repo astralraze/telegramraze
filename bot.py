@@ -22,7 +22,6 @@ load_dotenv()
 async def main():
     bot = Bot(token=os.environ.get('TOKEN'), parse_mode=ParseMode.HTML)
     dp = Dispatcher()
-    await db.db_start()
     dp.include_router(router)
     dp.include_router(router_reg)
     dp.include_router(router_filter)
